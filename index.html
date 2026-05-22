@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lanka AI Design Agent</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans min-h-screen flex flex-col justify-between">
+
+<header class="bg-slate-900 text-white py-6 text-center shadow-sm">
+<h1 class="text-2xl font-bold text-amber-400">Lanka AI Design Agent</h1>
+<p class="text-xs text-slate-400 mt-1">Gemini AI මඟින් ක්‍රියාත්මක වන ප්‍රබල Netlify ඩිසයින් සිස්ටම් එක</p>
+</header>
+
+<main class="max-w-5xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-8 w-full flex-grow">
+<div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between">
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">1. බිස්නස් වර්ගය තෝරන්න:</label>
+<select id="category" class="w-full p-3 border border-gray-300 rounded-xl text-sm bg-white outline-none">
+<option value="clothing">👕 Clothing Business</option>
+<option value="cake">🎂 Cake & Bakery</option>
+<option value="rent">🚗 Rent & Taxi</option>
+<option value="tourism">🌴 Tourism & Safari</option>
+</select>
+</div>
+
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">2. පෝස්ට් එකේ ප්‍රමාණය (Ratio):</label>
+<select id="ratio" onchange="updatePreviewSize()" class="w-full p-3 border border-gray-300 rounded-xl text-sm bg-white outline-none">
+<option value="1:1">1:1 (Square Post)</option>
+<option value="9:16">9:16 (Story / Reel)</option>
+<option value="16:9">16:9 (Landscape Cover)</option>
+<option value="4:5">4:5 (Portrait Post)</option>
+</select>
+</div>
+
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">3. ඔබට අවශ්‍ය දේ ලියන්න (Prompt):</label>
+<textarea id="userPrompt" rows="4" placeholder="උදා: Muru Safari එකට සිංහල අවුරුදු නිවාඩුවට යාල සෆාරි යන්න එන්න කියන පෝස්ට් එකක්..." class="w-full p-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+</div>
+</div>
+
+<button onclick="generateAIDesign()" id="genBtn" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 rounded-xl shadow-md transition text-sm">
+✨ Real AI Design එක සාදන්න
+</button>
+</div>
+
+<div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between items-center min-h-[400px]">
+<h3 class="text-sm font-semibold text-gray-700 self-start mb-4">Live AI Preview:</h3>
+
+<div id="previewContainer" class="w-full max-w-[300px] bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden p-2 shadow-inner aspect-square transition-all">
+<p id="placeholderText" class="text-gray-400 text-xs text-center px-6">විස්තර ඇතුළත් කර බටන් එක ඔබන්න.</p>
+</div>
+
+<button id="downloadBtn" onclick="downloadImage()" class="w-full mt-6 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl shadow-sm transition text-sm hidden">
+📥 Post එක Image (.png) එකක් ලෙස බාගත කරගන්න
+</button>
+</div>
+</main>
+
+<canvas id="downloadCanvas" class="hidden"></canvas>
+
+<script>
+function updatePreviewSize() {
+const ratio = document.getElementById('ratio').value;
+const preview = document.getElementById('previewContainer');
+preview.className = "w-full max-w-[300px] bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden p-2 shadow-inner transition-all";
+if (ratio === '1:1') preview.classList.add('aspect-square');
+if (ratio === '9:16') preview.classList.add('aspect-[9/16]');
+if (ratio === '16:9') preview.classList.add('aspect-[16/9]');
+if (ratio === '4:5') preview.classList.add('aspect-[4/5]');
+}
+
+async function generateAIDesign() {
+const category = document.getElementById('category').value;
+const ratio = document.getElementById('ratio').value;
+const prompt = document.getElementById('userPrompt').value;
+const btn = document.getElementById('genBtn');
+
+if (!prompt) return alert("ਕරුණਾකර පෝස්ට් එකේ වෙන්න ඕන දේ ලියන්න!");
+
+btn.disabled = true;
+btn.innerText = "⏳ AI මොඩලය මඟින් ඩිසයින් එක සාදමින් පවතී...";
+
+try {
+// Netlify Backend Function එකට Request එක යවනවා
+const res = await fetch('/.netlify/functions/generate', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ category, ratio, prompt })
+});
+const data = await res.json();
+
+if (data.svg) {
+document.getElementById('previewContainer').innerHTML = data.svg;
+document.getElementById('downloadBtn').classList.remove('hidden');
+} else {
+alert(data.error || "දෝෂයක් සිදු විය.");
+}
+} catch (err) {
+alert("Backend එකට සම්බන්ධ වීමට නොහැකි විය.");
+}
+btn.disabled = false;
+btn.innerText = "✨ Real AI Design එක සාදන්න";
+}
+
+function downloadImage() {
+const svgElement = document.getElementById('previewContainer').querySelector('svg');
+const ratio = document.getElementById('ratio').value;
+const category = document.getElementById('category').value;
+if (!svgElement) return;
+
+const svgString = new XMLSerializer().serializeToString(svgElement);
+const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+const blobURL = URL.createObjectURL(svgBlob);
+
+const image = new Image();
+image.onload = () => {
+let width = 1080; let height = 1080;
+if (ratio === '9:16') { width = 1080; height = 1920; }
+if (ratio === '16:9') { width = 1920; height = 1080; }
+if (ratio === '4:5') { width = 1080; height = 1350; }
+
+const canvas = document.getElementById('downloadCanvas');
+canvas.width = width;
+canvas.height = height;
+const context = canvas.getContext("2d");
+context.drawImage(image, 0, 0, width, height);
+
+const pngURL = canvas.toDataURL("image/png");
+const downloadLink = document.createElement("a");
+downloadLink.href = pngURL;
+downloadLink.download = `LankaAI_${category}_${ratio}.png`;
+document.body.appendChild(downloadLink);
+downloadLink.click();
+document.body.removeChild(downloadLink);
+URL.revokeObjectURL(blobURL);
+};
+image.src = blobURL;
+}
+</script>
+</body>
+</html>
