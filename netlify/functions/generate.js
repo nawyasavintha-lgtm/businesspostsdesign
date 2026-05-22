@@ -16,104 +16,33 @@ if (ratio === '4:5') { width = 1080; height = 1350; }
 let bgColor = "#f8fafc";
 let accentColor = "#3b82f6";
 let overlayCard = "rgba(255, 255, 255, 0.9)";
+let customStyle = "Theme: Modern commercial advertisement. Style: Clean geometric layouts, elegant typography with beautiful backgrounds.";
 
 if (category === 'clothing') {
 bgColor = "#111827"; // Luxury Dark
 accentColor = "#fbbf24"; // Amber Gold
 overlayCard = "rgba(31, 41, 55, 0.8)";
+customStyle = "Theme: Premium Fashion Brand. Style: Editorial fashion magazine template layout with upscale geometric presentation.";
 } else if (category === 'tourism') {
 bgColor = "#14532d"; // Safari Jungle Green
 accentColor = "#f97316"; // Safety Orange
 overlayCard = "rgba(255, 255, 255, 0.95)";
+customStyle = "Theme: Wild safari adventure. Colors: Rich olive green, warm wooden tones, safari orange.";
 } else if (category === 'cake') {
 bgColor = "#fdf2f8"; // Pastel Soft Pink
 accentColor = "#db2777"; // Deep Pink
 overlayCard = "rgba(255, 255, 255, 0.9)";
+customStyle = "Theme: Luxury custom bakers. Colors: Pastel pink, rich sweet cream, golden accents.";
 } else if (category === 'rent') {
 bgColor = "#0f172a"; // Tech Slate
 accentColor = "#eab308"; // Glowing Yellow
 overlayCard = "rgba(30, 41, 59, 0.85)";
-}
-
-// 3. HARDCODED SMART GRID SYSTEM FOR IMAGES (Prevents Overlapping)
-let generatedImageTags = "";
-
-if (imageCount && imageCount > 0) {
-if (imageCount === 1) {
-// Single Image Center Layout
-let imgW = width * 0.7;
-let imgH = height * 0.55;
-let imgX = (width - imgW) / 2;
-let imgY = height * 0.18;
-generatedImageTags = `<g filter="url(#shadow)">
-<rect x="${imgX - 10}" y="${imgY - 10}" width="${imgW + 20}" height="${imgH + 20}" rx="15" fill="#ffffff" stroke="${accentColor}" stroke-width="4"/>
-<clipPath id="clip0"><rect x="${imgX}" y="${imgY}" width="${imgW}" height="${imgH}" rx="10"/></clipPath>
-<image href="{USER_IMAGE_0}" x="${imgX}" y="${imgY}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip0)"/>
-</g>`;
-}
-else if (imageCount === 2) {
-// 2 Images Side-by-Side Split Grid
-let gap = 40;
-let imgW = (width * 0.85 - gap) / 2;
-let imgH = height * 0.55;
-let startX = (width - (imgW * 2 + gap)) / 2;
-let imgY = height * 0.18;
-
-generatedImageTags = `
-<g filter="url(#shadow)">
-<rect x="${startX - 8}" y="${imgY - 8}" width="${imgW + 16}" height="${imgH + 16}" rx="15" fill="#ffffff" stroke="${accentColor}" stroke-width="3"/>
-<clipPath id="clip1"><rect x="${startX}" y="${imgY}" width="${imgW}" height="${imgH}" rx="10"/></clipPath>
-<image href="{USER_IMAGE_0}" x="${startX}" y="${imgY}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip1)"/>
-</g>
-<g filter="url(#shadow)">
-<rect x="${startX + imgW + gap - 8}" y="${imgY - 8}" width="${imgW + 16}" height="${imgH + 16}" rx="15" fill="#ffffff" stroke="${accentColor}" stroke-width="3"/>
-<clipPath id="clip2"><rect x="${startX + imgW + gap}" y="${imgY}" width="${imgW}" height="${imgH}" rx="10"/></clipPath>
-<image href="{USER_IMAGE_1}" x="${startX + imgW + gap}" y="${imgY}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip2)"/>
-</g>`;
-}
-else {
-// 3 or More Images: Balanced 2x2 Matrix Grid
-let gap = 30;
-let imgW = (width * 0.85 - gap) / 2;
-let imgH = (height * 0.55 - gap) / 2;
-let startX = (width - (imgW * 2 + gap)) / 2;
-let startY = height * 0.18;
-
-// Slot 1
-generatedImageTags += `<g filter="url(#shadow)">
-<rect x="${startX - 6}" y="${startY - 6}" width="${imgW + 12}" height="${imgH + 12}" rx="12" fill="#ffffff" stroke="${accentColor}" stroke-width="2"/>
-<clipPath id="c1"><rect x="${startX}" y="${startY}" width="${imgW}" height="${imgH}" rx="8"/></clipPath>
-<image href="{USER_IMAGE_0}" x="${startX}" y="${startY}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#c1)"/>
-</g>`;
-// Slot 2
-generatedImageTags += `<g filter="url(#shadow)">
-<rect x="${startX + imgW + gap - 6}" y="${startY - 6}" width="${imgW + 12}" height="${imgH + 12}" rx="12" fill="#ffffff" stroke="${accentColor}" stroke-width="2"/>
-<clipPath id="c2"><rect x="${startX + imgW + gap}" y="${startY}" width="${imgW}" height="${imgH}" rx="8"/></clipPath>
-<image href="{USER_IMAGE_1}" x="${startX + imgW + gap}" y="${startY}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#c2)"/>
-</g>`;
-// Slot 3
-if (imageCount >= 3) {
-generatedImageTags += `<g filter="url(#shadow)">
-<rect x="${startX - 6}" y="${startY + imgH + gap - 6}" width="${imgW + 12}" height="${imgH + 12}" rx="12" fill="#ffffff" stroke="${accentColor}" stroke-width="2"/>
-<clipPath id="c3"><rect x="${startX}" y="${startY + imgH + gap}" width="${imgW}" height="${imgH}" rx="8"/></clipPath>
-<image href="{USER_IMAGE_2}" x="${startX}" y="${startY + imgH + gap}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#c3)"/>
-</g>`;
-}
-// Slot 4
-if (imageCount >= 4) {
-generatedImageTags += `<g filter="url(#shadow)">
-<rect x="${startX + imgW + gap - 6}" y="${startY + imgH + gap - 6}" width="${imgW + 12}" height="${imgH + 12}" rx="12" fill="#ffffff" stroke="${accentColor}" stroke-width="2"/>
-<clipPath id="c4"><rect x="${startX + imgW + gap}" y="${startY + imgH + gap}" width="${imgW}" height="${imgH}" rx="8"/></clipPath>
-<image href="{USER_IMAGE_3}" x="${startX + imgW + gap}" y="${startY + imgH + gap}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#c4)"/>
-</g>`;
-}
-}
+customStyle = "Theme: Modern automotive car rent. Colors: High-contrast professional dark mode with striking neon yellow accents.";
 }
 
 const apiKey = process.env.GEMINI_API_KEY;
 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-// 4. Instruct Gemini to write ONLY Text overlays, graphics, and backgrounds around our frames
 const apiPayload = {
 contents: [{
 parts: [{
@@ -162,7 +91,6 @@ let finalClosingTagIndex = aiGeneratedGraphics.lastIndexOf("</svg>");
 if (finalClosingTagIndex !== -1) {
 let coreSvgSetup = aiGeneratedGraphics.substring(0, finalClosingTagIndex);
 
-// Inject useful shadow filters definition to make frames pop out natively
 let filterDef = `<defs>
 <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
 <feDropShadow dx="0" dy="12" stdDeviation="10" flood-opacity="0.3" flood-color="#000000"/>
