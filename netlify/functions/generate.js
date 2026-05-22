@@ -4,35 +4,35 @@ return { statusCode: 405, body: "Method Not Allowed" };
 }
 
 try {
-const { category, ratio, prompt, hasModel, hasPattern } = JSON.parse(event.body);
+const { category, ratio, prompt, imageCount } = JSON.parse(event.body);
 
 let width = 1080; let height = 1080;
 if (ratio === '9:16') { width = 1080; height = 1920; }
 if (ratio === '16:9') { width = 1920; height = 1080; }
 if (ratio === '4:5') { width = 1080; height = 1350; }
 
-let customStyle = "";
+let customStyle = "Theme: Modern commercial advertisement. Style: Clean geometric layouts, elegant typography with clean backgrounds.";
 if (category === 'clothing') {
-customStyle = "Theme: Premium High-End Fashion Boutique. Style: Editorial fashion magazine cover vibe. Elegant geometric frames, background card overlays, neat typographic pairings.";
+customStyle = "Theme: Premium Fashion Brand. Style: Editorial fashion magazine template layout with upscale geometric presentation.";
 } else if (category === 'tourism') {
-customStyle = "Theme: Wild safari adventure. Colors: Olive green, dark safari tones.";
+customStyle = "Theme: Wild safari adventure. Colors: Rich olive green, warm wooden tones, safari orange.";
 } else if (category === 'cake') {
-customStyle = "Theme: Luxury custom cakes. Colors: Pastel pink, rich cream, gold touches.";
+customStyle = "Theme: Luxury custom bakers. Colors: Pastel pink, rich sweet cream, golden accents.";
 } else if (category === 'rent') {
-customStyle = "Theme: Modern car rental. Colors: High-contrast aggressive dark mode with glowing yellow.";
+customStyle = "Theme: Modern automotive car rent. Colors: High-contrast professional dark mode with striking neon yellow accents.";
 }
 
-// DYNAMIC INJECTOR FOR MULTIPLE IMAGES
-let multiImageInstruction = "";
+// DYNAMICALLY GENERATE INDIVIDUAL IMAGES IN THE LAYOUT
+let galleryInstruction = "";
+if (imageCount && imageCount > 0) {
+galleryInstruction = `\n5. DYNAMIC IMAGE GALLERY INSTRUCTIONS: The user has uploaded ${imageCount} reference image(s). You MUST include exactly ${imageCount} professional <image> tag(s) distributed artistically across the canvas.
+Each image tag MUST use the exact placeholder format for its href attribute:`;
 
-if (hasModel) {
-multiImageInstruction += `\n5. MODEL IMAGE RULE: The user has uploaded a primary Model/Product photo. You MUST include a highly professional, centrally placed <image> tag with the exact attribute href="{USER_MODEL_IMAGE}". Position it beautifully inside an elegant rectangle or arch frame layout.`;
+for (let i = 0; i < imageCount; i++) {
+galleryInstruction += `\n- Image ${i+1}: Use href="{USER_IMAGE_${i}}". Place it inside a beautiful modern frame container (rectangle, grid layout, circle badge, or overlay card) with custom x, y, width, and height so they do not overlap overlaps messily. Arrange them as a stunning gallery collage or balanced promotional layout matching the business type.`;
 }
-
-if (hasPattern && category === 'clothing') {
-multiImageInstruction += `\n6. PATTERN INTEGRATION: The user has uploaded a second image showing the clothing pattern fabric design. You must analyze its style conceptually and create a background design layout or side panels that harmonize with that style. Additionally, place a small artistic <image> tag with href="{USER_PATTERN_IMAGE}" inside a miniature 'Fabric Pattern Sample Swatch Card' or a background decorative abstract grid circle to blend it natively into the fashion advertisement poster.`;
-} else if (hasPattern) {
-multiImageInstruction += `\n6. SECONDARY IMAGE: Include an <image> tag with href="{USER_PATTERN_IMAGE}" in a secondary design box or badge element.`;
+} else {
+galleryInstruction = `\n5. No reference images uploaded. Use highly creative vector illustrations, abstract background shapes, or clean pattern iconography to fill up the design gracefully.`;
 }
 
 const apiKey = process.env.GEMINI_API_KEY;
@@ -41,7 +41,7 @@ const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-
 const apiPayload = {
 contents: [{
 parts: [{
-text: `You are an expert Senior Graphic Designer. Create a highly professional, visually stunning commercial advertisement banner in RAW SVG format.
+text: `You are an expert Senior UI/UX and Graphic Designer. Create a highly professional, visually stunning commercial advertisement banner in RAW SVG format.
 The SVG must have viewBox="0 0 ${width} ${height}" and width="100%" height="100%".
 
 Business Category: ${category}
@@ -50,10 +50,10 @@ User's Goal/Concept: "${prompt}"
 
 CRITICAL COMPLIANCE RULES:
 1. Output MUST ONLY be valid, well-formatted SVG code.
-2. Do NOT include ANY explanations, markdown blocks like \`\`\`svg, or notes outside the SVG text response.
+2. Do NOT include ANY explanations, markdown blocks like \`\`\`svg, or comments outside the SVG response.
 3. Use beautiful built-in system typography (e.g., Arial, Impact, sans-serif) for readable bold English promotional headings. Keep text strings strictly English.
-4. Use clean vector paths, beautiful gradients, overlays, and modern text-badges.
-${multiImageInstruction}`
+4. Use clean vector paths, gradients, card shapes, frames, and badge overlays.
+${galleryInstruction}`
 }]
 }],
 generationConfig: { temperature: 0.2, topP: 0.95 }
