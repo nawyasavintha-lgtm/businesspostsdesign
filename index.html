@@ -3,23 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lanka AI Design Agent PRO</title>
+<title>Lanka AI Design Agent PRO (Nano Banana)</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 font-sans min-h-screen flex flex-col justify-between">
 
 <header class="bg-slate-900 text-white py-6 text-center shadow-sm">
 <h1 class="text-2xl font-bold text-amber-400">Lanka AI Design Agent PRO</h1>
-<p class="text-xs text-slate-400 mt-1">Multi-Image Gallery Support: ඕනෑම බිස්නස් එකක පින්තූර කිහිපයක් එකවර එක් කිරීමේ හැකියාව</p>
+<p class="text-xs text-slate-400 mt-1">Google Nano Banana API Engine: පික්සල් ලෙවල් එකෙන්ම පින්තූර එඩිට් සහ රීමික්ස් කිරීමේ හැකියාව</p>
 </header>
 
 <main class="max-w-5xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-8 w-full flex-grow">
+
 <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between">
 <div class="space-y-6">
+
 <div>
 <label class="block text-sm font-semibold text-gray-700 mb-2">1. බිස්නස් වර්ගය තෝරන්න:</label>
 <select id="category" class="w-full p-3 border border-gray-300 rounded-xl text-sm bg-white outline-none">
-<option value="clothing">👕 Clothing Business</option>
+<option value="clothing">👕 Clothing & Fashion</option>
 <option value="cake">🎂 Cake & Bakery</option>
 <option value="rent">🚗 Rent & Taxi</option>
 <option value="tourism">🌴 Tourism & Safari</option>
@@ -45,7 +47,7 @@
 
 <div>
 <label class="block text-sm font-semibold text-gray-700 mb-2">4. ඔබට අවශ්‍ය දේ ලියන්න (Prompt):</label>
-<textarea id="userPrompt" rows="3" placeholder="උදා: Create a beautiful promotional banner using the uploaded product images creatively..." class="w-full p-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+<textarea id="userPrompt" rows="4" placeholder="උදා: මට මේ ගවුමක් ඇඳන් ඉන්න girl ට මේ පළවෙනි image එකේ තියෙන blouse එක දාලා දෙන්න..." class="w-full p-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
 </div>
 </div>
 
@@ -67,28 +69,25 @@
 </div>
 </main>
 
-<canvas id="downloadCanvas" class="hidden"></canvas>
-
 <script>
 let uploadedImagesArray = [];
 
-// Track and render multiple image uploads
+// Track and process image uploads into clean base64 data array
 document.getElementById('galleryImages').addEventListener('change', function(e) {
 const files = e.target.files;
 const thumbsContainer = document.getElementById('thumbsPreview');
-thumbsContainer.innerHTML = ""; // Clear old views
+thumbsContainer.innerHTML = ""; // Reset older views
 uploadedImagesArray = [];
 
 if (files.length > 0) {
 Array.from(files).forEach((file) => {
 const reader = new FileReader();
 reader.onload = function(event) {
-const base64Str = event.target.result;
-uploadedImagesArray.push(base64Str);
+uploadedImagesArray.push(event.target.result);
 
-// UI feedback thumb
+// Mini-thumbnail render block
 const img = document.createElement('img');
-img.src = base64Str;
+img.src = event.target.result;
 img.className = "w-12 h-12 object-cover rounded-lg border border-gray-300 shadow-sm";
 thumbsContainer.appendChild(img);
 };
@@ -97,16 +96,19 @@ reader.readAsDataURL(file);
 }
 });
 
+// Dynamic box ratio adjuster
 function updatePreviewSize() {
 const ratio = document.getElementById('ratio').value;
 const preview = document.getElementById('previewContainer');
 preview.className = "w-full max-w-[300px] bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden p-2 shadow-inner transition-all";
+
 if (ratio === '1:1') preview.classList.add('aspect-square');
 if (ratio === '9:16') preview.classList.add('aspect-[9/16]');
 if (ratio === '16:9') preview.classList.add('aspect-[16/9]');
 if (ratio === '4:5') preview.classList.add('aspect-[4/5]');
 }
 
+// Call Netlify function backend
 async function generateAIDesign() {
 const category = document.getElementById('category').value;
 const ratio = document.getElementById('ratio').value;
@@ -116,7 +118,7 @@ const btn = document.getElementById('genBtn');
 if (!prompt) return alert("කරුණාකර පෝස්ට් එකේ වෙන්න ඕන දේ ලියන්න!");
 
 btn.disabled = true;
-btn.innerText = "⏳ AI මොඩලය මඟින් ඩිසයින් එක සාදමින් පවතී...";
+btn.innerText = "⏳ Nano Banana Pro මඟින් පින්තූරය සකසමින් පවතී...";
 
 try {
 const res = await fetch('/.netlify/functions/generate', {
@@ -126,24 +128,17 @@ body: JSON.stringify({
 category,
 ratio,
 prompt,
-imageCount: uploadedImagesArray.length
+imagesArray: uploadedImagesArray // Injecting the array directly
 })
 });
 const data = await res.json();
 
-if (data.svg) {
-let finalSvg = data.svg;
-
-// Loop and hook image paths
-uploadedImagesArray.forEach((base64Str, index) => {
-const placeholder = new RegExp(`{USER_IMAGE_${index}}`, 'g');
-finalSvg = finalSvg.replace(placeholder, base64Str);
-});
-
-document.getElementById('previewContainer').innerHTML = finalSvg;
+if (data.base64Image) {
+// Injecting raw output image straight into preview card
+document.getElementById('previewContainer').innerHTML = `<img src="${data.base64Image}" class="w-full h-full object-contain rounded-xl" id="finalAiImage" />`;
 document.getElementById('downloadBtn').classList.remove('hidden');
 } else {
-alert(data.error || "දෝෂයක් සිදු විය.");
+alert(data.error || "Nano Banana දෝෂයක් සිදු විය.");
 }
 } catch (err) {
 alert("Backend එකට සම්බන්ධ වීමට නොහැකි විය.");
@@ -152,39 +147,17 @@ btn.disabled = false;
 btn.innerText = "✨ Real AI Design එක සාදන්න";
 }
 
+// Simple explicit native link down-downloader
 function downloadImage() {
-const svgElement = document.getElementById('previewContainer').querySelector('svg');
-const ratio = document.getElementById('ratio').value;
-const category = document.getElementById('category').value;
-if (!svgElement) return;
+const img = document.getElementById('finalAiImage');
+if (!img) return;
 
-const svgString = new XMLSerializer().serializeToString(svgElement);
-const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-const blobURL = URL.createObjectURL(svgBlob);
-
-const image = new Image();
-image.onload = () => {
-let width = 1080; let height = 1080;
-if (ratio === '9:16') { width = 1080; height = 1920; }
-if (ratio === '16:9') { width = 1920; height = 1080; }
-if (ratio === '4:5') { width = 1080; height = 1350; }
-
-const canvas = document.getElementById('downloadCanvas');
-canvas.width = width;
-canvas.height = height;
-const context = canvas.getContext("2d");
-context.drawImage(image, 0, 0, width, height);
-
-const pngURL = canvas.toDataURL("image/png");
 const downloadLink = document.createElement("a");
-downloadLink.href = pngURL;
-downloadLink.download = `LankaAI_Pro_${category}_${ratio}.png`;
+downloadLink.href = img.src;
+downloadLink.download = `NanoBanana_Output.png`;
 document.body.appendChild(downloadLink);
 downloadLink.click();
 document.body.removeChild(downloadLink);
-URL.revokeObjectURL(blobURL);
-};
-image.src = blobURL;
 }
 </script>
 </body>
