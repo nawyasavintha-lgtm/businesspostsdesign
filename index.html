@@ -1,230 +1,208 @@
 <!DOCTYPE html>
 <html lang="si">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lanka AI Design Agent - Free Canvas Engine</title>
-    <!-- Tailwind CSS මඟින් UI එක ලස්සන කිරීමට -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .ratio-btn.active { border-color: #3b82f6; background-color: #eff6ff; color: #1d4ed8; }
-        .cat-card.active { border-color: #10b981; background-color: #ecfdf5; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lanka AI Design Agent - Free Canvas Engine</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 font-sans min-h-screen flex flex-col justify-between">
 
-    <!-- Header -->
-    <header class="bg-slate-900 text-white py-6 shadow-md">
-        <div class="max-w-5xl mx-auto px-4 text-center">
-            <h1 class="text-3xl font-bold tracking-tight text-amber-400">Lanka AI Design Agent</h1>
-            <p class="text-slate-400 mt-2 text-sm md:text-base">ලංකාවේ බිස්නස් වලට විනාඩියෙන් Marketing Posts සාදන නොමිලේ වැඩකරන පද්ධතිය</p>
-        </div>
-    </header>
+<header class="bg-slate-900 text-white py-6 shadow-md">
+<div class="max-w-5xl mx-auto px-4 text-center">
+<h1 class="text-3xl font-bold tracking-tight text-amber-400">Lanka AI Design Agent</h1>
+<p class="text-slate-400 mt-2 text-sm md:text-base">ලංකාවේ බිස්නස් වලට විනාඩියෙන් Marketing Posts සාදන නොමිලේ වැඩකරන පද්ධතිය</p>
+</div>
+</header>
 
-    <!-- Main Content -->
-    <main class="max-w-5xl mx-auto px-4 py-8 w-full flex-grow grid grid-cols-1 md:grid-cols-2 gap-8">
-        
-        <!-- Left Controls -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
-            <div>
-                <!-- 1. Category Selector -->
-                <label class="block text-sm font-semibold text-gray-700 mb-3">1. ඔබේ බිස්නස් වර්ගය තෝරන්න (Category):</label>
-                <div class="grid grid-cols-2 gap-3 mb-6">
-                    <button onclick="selectCategory('clothing', this)" class="cat-card p-4 border border-gray-200 rounded-xl text-left hover:border-gray-300 transition active">
-                        <span class="block text-xl">👕</span>
-                        <span class="font-medium text-sm text-gray-800">Clothing Business</span>
-                    </button>
-                    <button onclick="selectCategory('cake', this)" class="cat-card p-4 border border-gray-200 rounded-xl text-left hover:border-gray-300 transition">
-                        <span class="block text-xl">🎂</span>
-                        <span class="font-medium text-sm text-gray-800">Cake & Bakery</span>
-                    </button>
-                    <button onclick="selectCategory('rent', this)" class="cat-card p-4 border border-gray-200 rounded-xl text-left hover:border-gray-300 transition">
-                        <span class="block text-xl">🚗</span>
-                        <span class="font-medium text-sm text-gray-800">Vehicle Rent / Taxi</span>
-                    </button>
-                    <button onclick="selectCategory('tourism', this)" class="cat-card p-4 border border-gray-200 rounded-xl text-left hover:border-gray-300 transition">
-                        <span class="block text-xl">🌴</span>
-                        <span class="font-medium text-sm text-gray-800">Tourism / Safari</span>
-                    </button>
-                </div>
+<main class="max-w-5xl mx-auto px-4 py-8 w-full flex-grow grid grid-cols-1 md:grid-cols-2 gap-8">
 
-                <!-- 2. Ratio Selector -->
-                <label class="block text-sm font-semibold text-gray-700 mb-3">2. පෝස්ට් එකේ ප්‍රමාණය තෝරන්න (Aspect Ratio):</label>
-                <div class="grid grid-cols-4 gap-2 mb-6">
-                    <button onclick="selectRatio('1:1', this)" class="ratio-btn active p-3 border border-gray-200 rounded-xl text-center text-xs font-semibold">
-                        1:1<br><span class="text-[10px] font-normal text-gray-500">Post</span>
-                    </button>
-                    <button onclick="selectRatio('9:16', this)" class="ratio-btn p-3 border border-gray-200 rounded-xl text-center text-xs font-semibold">
-                        9:16<br><span class="text-[10px] font-normal text-gray-500">Story/Reel</span>
-                    </button>
-                    <button onclick="selectRatio('16:9', this)" class="ratio-btn p-3 border border-gray-200 rounded-xl text-center text-xs font-semibold">
-                        16:9<br><span class="text-[10px] font-normal text-gray-500">Cover</span>
-                    </button>
-                    <button onclick="selectRatio('4:5', this)" class="ratio-btn p-3 border border-gray-200 rounded-xl text-center text-xs font-semibold">
-                        4:5<br><span class="text-[10px] font-normal text-gray-500">Portrait</span>
-                    </button>
-                </div>
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between">
+<div class="space-y-6">
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-3">1. ඔබේ බිස්නස් වර්ගය තෝරන්න (Category):</label>
+<div class="grid grid-cols-2 gap-3">
+<button id="cat-clothing" onclick="changeCategory('clothing')" class="p-4 border-2 border-emerald-500 bg-emerald-50 rounded-xl text-left transition text-gray-800 font-medium text-sm">
+<span class="block text-xl">👕</span> Clothing Business
+</button>
+<button id="cat-cake" onclick="changeCategory('cake')" class="p-4 border-2 border-gray-200 rounded-xl text-left transition text-gray-800 font-medium text-sm hover:border-gray-300">
+<span class="block text-xl">🎂</span> Cake & Bakery
+</button>
+<button id="cat-rent" onclick="changeCategory('rent')" class="p-4 border-2 border-gray-200 rounded-xl text-left transition text-gray-800 font-medium text-sm hover:border-gray-300">
+<span class="block text-xl">🚗</span> Vehicle Rent / Taxi
+</button>
+<button id="cat-tourism" onclick="changeCategory('tourism')" class="p-4 border-2 border-gray-200 rounded-xl text-left transition text-gray-800 font-medium text-sm hover:border-gray-300">
+<span class="block text-xl">🌴</span> Tourism / Safari
+</button>
+</div>
+</div>
 
-                <!-- 3. Dynamic Text Input -->
-                <label class="block text-sm font-semibold text-gray-700 mb-2">3. පෝස්ට් එකේ සඳහන් විය යුතු ප්‍රධාන වැකිය (Main Text):</label>
-                <input id="mainText" type="text" placeholder="උදා: 20% New Year Discount!" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm mb-4">
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-3">2. පෝස්ට් එකේ ප්‍රමාණය තෝරන්න (Aspect Ratio):</label>
+<div class="grid grid-cols-4 gap-2">
+<button id="ratio-1-1" onclick="changeRatio('1:1')" class="p-3 border-2 border-blue-500 bg-blue-50 text-blue-700 rounded-xl text-center text-xs font-bold">
+1:1<br><span class="text-[10px] font-normal text-gray-500">Post</span>
+</button>
+<button id="ratio-9-16" onclick="changeRatio('9:16')" class="p-3 border-2 border-gray-200 rounded-xl text-center text-xs font-bold text-gray-700 hover:border-gray-300">
+9:16<br><span class="text-[10px] font-normal text-gray-500">Story</span>
+</button>
+<button id="ratio-16-9" onclick="changeRatio('16:9')" class="p-3 border-2 border-gray-200 rounded-xl text-center text-xs font-bold text-gray-700 hover:border-gray-300">
+16:9<br><span class="text-[10px] font-normal text-gray-500">Cover</span>
+</button>
+<button id="ratio-4-5" onclick="changeRatio('4:5')" class="p-3 border-2 border-gray-200 rounded-xl text-center text-xs font-bold text-gray-700 hover:border-gray-300">
+4:5<br><span class="text-[10px] font-normal text-gray-500">Portrait</span>
+</button>
+</div>
+</div>
 
-                <label class="block text-sm font-semibold text-gray-700 mb-2">4. උප වැකිය (Sub Text - Optional):</label>
-                <input id="subText" type="text" placeholder="උදා: Valid Until Sunday Only" class="w-full p-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm mb-4">
-            </div>
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">3. පෝස්ට් එකේ සඳහන් විය යුතු දේ ලියන්න (Prompt):</label>
+<textarea id="userPrompt" rows="4" placeholder="උදා: Big New Year Sale 20% Off! Valid until Sunday only." class="w-full p-3 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm outline-none"></textarea>
+</div>
+</div>
 
-            <button onclick="renderTemplate()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold p-4 rounded-xl shadow-md transition flex justify-center items-center gap-2">
-                🎨 Design එක Preview කරන්න
-            </button>
-        </div>
+<button onclick="renderTemplate()" class="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold p-4 rounded-xl shadow-md transition text-center">
+🎨 Design එක Preview කරන්න
+</button>
+</div>
 
-        <!-- Right Preview & Download -->
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between items-center min-h-[400px]">
-            <h3 class="text-sm font-semibold text-gray-700 self-start mb-4">ඔබේ Design Preview එක:</h3>
-            
-            <div id="previewContainer" class="w-full max-w-[320px] bg-gray-100 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300 aspect-square overflow-hidden shadow-inner p-2">
-                <p id="placeholderText" class="text-gray-400 text-xs text-center px-4">විස්තර ඇතුළත් කර Preview බටන් එක ඔබන්න.</p>
-            </div>
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between items-center min-h-[400px]">
+<h3 class="text-sm font-semibold text-gray-700 self-start mb-4">ඔබේ Design Preview එක:</h3>
 
-            <button id="downloadBtn" onclick="triggerDownload()" class="w-full mt-6 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold p-3 rounded-xl shadow-sm transition hidden">
-                📥 Post එක Image (.png) එකක් ලෙස බාගත කරගන්න
-            </button>
-        </div>
-    </main>
+<div id="previewContainer" class="w-full max-w-[320px] bg-gray-100 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300 aspect-square overflow-hidden shadow-inner p-2">
+<p id="placeholderText" class="text-gray-400 text-xs text-center px-4">විස්තර ඇතුළත් කර Preview බටන් එක ඔබන්න.</p>
+</div>
 
-    <canvas id="hiddenCanvas" class="hidden"></canvas>
+<button id="downloadBtn" onclick="triggerDownload()" class="w-full mt-6 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold p-3 rounded-xl shadow-sm transition hidden">
+📥 Post එක Image (.png) එකක් ලෙස බාගත කරගන්න
+</button>
+</div>
+</main>
 
-    <footer class="bg-slate-900 text-slate-500 text-center py-4 text-xs border-t border-slate-800">
-        &copy; 2026 Lanka AI Design Agent. 100% Free Hosting.
-    </footer>
+<canvas id="hiddenCanvas" class="hidden"></canvas>
 
-    <script>
-        let selectedCategory = 'clothing';
-        let selectedRatio = '1:1';
+<footer class="bg-slate-900 text-slate-500 text-center py-4 text-xs border-t border-slate-800">
+&copy; 2026 Lanka AI Design Agent. 100% Free Hosting.
+</footer>
 
-        function selectCategory(cat, element) {
-            document.querySelectorAll('.cat-card').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
-            selectedCategory = cat;
-        }
+<script>
+let selectedCategory = 'clothing';
+let selectedRatio = '1:1';
 
-        function selectRatio(ratio, element) {
-            document.querySelectorAll('.ratio-btn').forEach(el => el.classList.remove('active'));
-            element.classList.add('active');
-            selectedRatio = ratio;
-            
-            const preview = document.getElementById('previewContainer');
-            preview.className = "w-full max-w-[320px] bg-gray-100 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300 overflow-hidden shadow-inner p-2";
-            
-            if(ratio === '1:1') preview.classList.add('aspect-square');
-            if(ratio === '9:16') preview.classList.add('aspect-[9/16]');
-            if(ratio === '16:9') preview.classList.add('aspect-[16/9]');
-            if(ratio === '4:5') preview.classList.add('aspect-[4/5]');
-        }
+function changeCategory(cat) {
+selectedCategory = cat;
+// Reset all buttons
+document.querySelectorAll('[id^="cat-"]').forEach(btn => {
+btn.className = "p-4 border-2 border-gray-200 rounded-xl text-left transition text-gray-800 font-medium text-sm hover:border-gray-300";
+});
+// Set active button
+const activeBtn = document.getElementById('cat-' + cat);
+activeBtn.className = "p-4 border-2 border-emerald-500 bg-emerald-50 rounded-xl text-left transition text-gray-800 font-medium text-sm";
+}
 
-        function renderTemplate() {
-            const mainText = document.getElementById('mainText').value || 'SPECIAL OFFER';
-            const subText = document.getElementById('subText').value || 'Limited Time Only';
-            const container = document.getElementById('previewContainer');
-            const downloadBtn = document.getElementById('downloadBtn');
-            
-            let width = 1080; let height = 1080;
-            if(selectedRatio === '9:16') { width = 1080; height = 1920; }
-            if(selectedRatio === '16:9') { width = 1920; height = 1080; }
-            if(selectedRatio === '4:5') { width = 1080; height = 1350; }
+function changeRatio(ratio) {
+selectedRatio = ratio;
+// Reset all buttons
+document.querySelectorAll('[id^="ratio-"]').forEach(btn => {
+btn.className = "p-3 border-2 border-gray-200 rounded-xl text-center text-xs font-bold text-gray-700 hover:border-gray-300";
+});
+// Set active button
+const idMap = { '1:1': '1-1', '9:16': '9-16', '16:9': '16-9', '4:5': '4-5' };
+const activeBtn = document.getElementById('ratio-' + idMap[ratio]);
+activeBtn.className = "p-3 border-2 border-blue-500 bg-blue-50 text-blue-700 rounded-xl text-center text-xs font-bold";
 
-            // 🎨 බිස්නස් අනුව වෙනස් වන ලස්සන Templates (Colors & Styles)
-            let bgGradient = "linear-gradient(135deg, #1e1e2f, #111119)";
-            let accentColor = "#ff4757";
-            let tagLine = "NEW ARRIVALS";
+// Adjust preview container wrapper style
+const preview = document.getElementById('previewContainer');
+preview.className = "w-full max-w-[320px] bg-gray-100 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300 overflow-hidden shadow-inner p-2";
 
-            if(selectedCategory === 'clothing') {
-                bgGradient = "linear-gradient(135deg, #2c3e50, #0f2027)";
-                accentColor = "#f1c40f";
-                tagLine = "FASHION & STYLE";
-            } else if(selectedCategory === 'cake') {
-                bgGradient = "linear-gradient(135deg, #ff9ff3, #feca57)";
-                accentColor = "#ffffff";
-                tagLine = "FRESH BAKED DAILY";
-            } else if(selectedCategory === 'rent') {
-                bgGradient = "linear-gradient(135deg, #1e272e, #485460)";
-                accentColor = "#ffa801";
-                tagLine = "RENT A CAR / TAXI SERVICE";
-            } else if(selectedCategory === 'tourism') {
-                bgGradient = "linear-gradient(135deg, #10ac84, #01a3a4)";
-                accentColor = "#ff9f43";
-                tagLine = "EXPLORE SRI LANKA";
-            }
+if(ratio === '1:1') preview.classList.add('aspect-square');
+if(ratio === '9:16') preview.classList.add('aspect-[9/16]');
+if(ratio === '16:9') preview.classList.add('aspect-[16/9]');
+if(ratio === '4:5') preview.classList.add('aspect-[4/5]');
+}
 
-            // Canvas එකෙන් කෙලින්ම SVG එකක් generate කිරීම (No API calls)
-            const templateSvg = `
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="100%" height="100%">
-                    <defs>
-                        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:${bgGradient.split('#')[1].split(',')[0].trim()};stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:${bgGradient.split('#')[2].split(')')[0].trim()};stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                    
-                    <!-- Background -->
-                    <rect width="100%" height="100%" fill="url(#bgGrad)"/>
-                    
-                    <!-- Decorative Shapes -->
-                    <circle cx="${width*0.8}" cy="${height*0.2}" r="${width*0.3}" fill="white" opacity="0.03"/>
-                    <circle cx="${width*0.1}" cy="${height*0.8}" r="${width*0.2}" fill="${accentColor}" opacity="0.1"/>
-                    
-                    <!-- Category Badge -->
-                    <rect x="60" y="60" width="${width*0.4}" height="45" rx="10" fill="${accentColor}"/>
-                    <text x="${60 + (width*0.2)}" y="88" dominant-baseline="middle" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="16" font-weight="bold" fill="#000">${tagLine}</text>
-                    
-                    <!-- Main Promo Text -->
-                    <text x="60" y="${height*0.45}" font-family="'Segoe UI', Arial, sans-serif" font-size="${width*0.065}" font-weight="900" fill="white" letter-spacing="1">${mainText.toUpperCase()}</text>
-                    
-                    <!-- Sub Text -->
-                    <text x="60" y="${height*0.53}" font-family="'Segoe UI', Arial, sans-serif" font-size="${width*0.035}" font-weight="500" fill="white" opacity="0.8">${subText}</text>
-                    
-                    <!-- Call To Action Button -->
-                    <rect x="60" y="${height*0.75}" width="${width*0.35}" height="60" rx="12" fill="white"/>
-                    <text x="${60 + (width*0.175)}" y="${height*0.75 + 30}" dominant-baseline="middle" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="18" font-weight="bold" fill="#111">BOOK NOW</text>
-                </svg>
-            `;
-            
-            container.innerHTML = templateSvg;
-            downloadBtn.classList.remove('hidden');
-        }
+function renderTemplate() {
+const promptInput = document.getElementById('userPrompt').value || 'SPECIAL OFFER';
+const container = document.getElementById('previewContainer');
+const downloadBtn = document.getElementById('downloadBtn');
 
-        function triggerDownload() {
-            const svgElement = document.getElementById('previewContainer').querySelector('svg');
-            if(!svgElement) return;
-            const svgString = new XMLSerializer().serializeToString(svgElement);
-            const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-            const URL = window.URL  window.webkitURL  window;
-            const blobURL = URL.createObjectURL(svgBlob);
-            
-            const image = new Image();
-            image.onload = () => {
-                let width = 1080; let height = 1080;
-                if(selectedRatio === '9:16') { width = 1080; height = 1920; }
-                if(selectedRatio === '16:9') { width = 1920; height = 1080; }
-                if(selectedRatio === '4:5') { width = 1080; height = 1350; }
+let width = 1080; let height = 1080;
+if(selectedRatio === '9:16') { width = 1080; height = 1920; }
+if(selectedRatio === '16:9') { width = 1920; height = 1080; }
+if(selectedRatio === '4:5') { width = 1080; height = 1350; }
 
-                const canvas = document.getElementById('hiddenCanvas');
-                canvas.width = width;
-                canvas.height = height;
-                const context = canvas.getContext("2d");
-                context.drawImage(image, 0, 0, width, height);
-                
-                const pngURL = canvas.toDataURL("image/png");
-                const downloadLink = document.createElement("a");
-                downloadLink.href = pngURL;
-                downloadLink.download = LankaAI_${selectedCategory}_${selectedRatio}.png;
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-                URL.revokeObjectURL(blobURL);
-            };
-            image.src = blobURL;
-        }
-    </script>
+// Design Styles configurations
+let color1 = "#2c3e50"; let color2 = "#0f2027";
+let accentColor = "#f1c40f"; let tagLine = "FASHION & STYLE";
+
+if(selectedCategory === 'cake') {
+color1 = "#ff9ff3"; color2 = "#feca57"; accentColor = "#ffffff"; tagLine = "FRESH BAKED DAILY";
+} else if(selectedCategory === 'rent') {
+color1 = "#1e272e"; color2 = "#485460"; accentColor = "#ffa801"; tagLine = "RENT A CAR / TAXI";
+} else if(selectedCategory === 'tourism') {
+color1 = "#10ac84"; color2 = "#01a3a4"; accentColor = "#ff9f43"; tagLine = "EXPLORE SRI LANKA";
+}
+
+// Generate Raw SVG layout injection
+const templateSvg = `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="100%" height="100%">
+<defs>
+<linearGradient id="canvasGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:${color1};stop-opacity:1" />
+<stop offset="100%" style="stop-color:${color2};stop-opacity:1" />
+</linearGradient>
+</defs>
+<rect width="100%" height="100%" fill="url(#canvasGrad)"/>
+<circle cx="${width*0.8}" cy="${height*0.2}" r="${width*0.3}" fill="white" opacity="0.04"/>
+<circle cx="${width*0.1}" cy="${height*0.8}" r="${width*0.2}" fill="${accentColor}" opacity="0.08"/>
+
+<rect x="60" y="70" width="${width*0.45}" height="50" rx="10" fill="${accentColor}"/>
+<text x="${60 + (width*0.225)}" y="96" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#111">${tagLine}</text>
+
+<text x="60" y="${height*0.45}" font-family="Arial, sans-serif" font-size="${width*0.055}" font-weight="900" fill="white">${promptInput.substring(0, 30).toUpperCase()}</text>
+<text x="60" y="${height*0.53}" font-family="Arial, sans-serif" font-size="${width*0.04}" font-weight="normal" fill="white" opacity="0.8">${promptInput.substring(30, 80) || ''}</text>
+
+<rect x="60" y="${height*0.78}" width="${width*0.35}" height="60" rx="12" fill="white"/>
+<text x="${60 + (width*0.175)}" y="${height*0.78 + 30}" dominant-baseline="middle" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#111">CONTACT NOW</text>
+</svg>
+`;
+
+container.innerHTML = templateSvg;
+downloadBtn.classList.remove('hidden');
+}
+
+function triggerDownload() {
+const svgElement = document.getElementById('previewContainer').querySelector('svg');
+if(!svgElement) return;
+
+const svgString = new XMLSerializer().serializeToString(svgElement);
+const svgBlob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+const blobURL = URL.createObjectURL(svgBlob);
+
+const image = new Image();
+image.onload = () => {
+let width = 1080; let height = 1080;
+if(selectedRatio === '9:16') { width = 1080; height = 1920; }
+if(selectedRatio === '16:9') { width = 1920; height = 1080; }
+if(selectedRatio === '4:5') { width = 1080; height = 1350; }
+
+const canvas = document.getElementById('hiddenCanvas');
+canvas.width = width;
+canvas.height = height;
+const context = canvas.getContext("2d");
+context.drawImage(image, 0, 0, width, height);
+
+const pngURL = canvas.toDataURL("image/png");
+const downloadLink = document.createElement("a");
+downloadLink.href = pngURL;
+downloadLink.download = `LankaAI_${selectedCategory}_${selectedRatio}.png`;
+document.body.appendChild(downloadLink);
+downloadLink.click();
+document.body.removeChild(downloadLink);
+URL.revokeObjectURL(blobURL);
+};
+image.src = blobURL;
+}
+</script>
 </body>
 </html>
