@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lanka AI Design Agent</title>
+<title>Lanka AI Design Agent PRO</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 font-sans min-h-screen flex flex-col justify-between">
 
 <header class="bg-slate-900 text-white py-6 text-center shadow-sm">
-<h1 class="text-2xl font-bold text-amber-400">Lanka AI Design Agent</h1>
-<p class="text-xs text-slate-400 mt-1">Gemini AI මඟින් ක්‍රියාත්මක වන ප්‍රබල Netlify ඩිසයින් සිස්ටම් එක</p>
+<h1 class="text-2xl font-bold text-amber-400">Lanka AI Design Agent PRO</h1>
+<p class="text-xs text-slate-400 mt-1">ඔබේම පින්තූර (Reference Images) සමඟ වැඩකරන ඇත්තම AI ඩිසයින් පද්ධතිය</p>
 </header>
 
 <main class="max-w-5xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-8 w-full flex-grow">
@@ -37,8 +37,13 @@
 </div>
 
 <div>
-<label class="block text-sm font-semibold text-gray-700 mb-2">3. ඔබට අවශ්‍ය දේ ලියන්න (Prompt):</label>
-<textarea id="userPrompt" rows="4" placeholder="උදා: Muru Safari එකට සිංහල අවුරුදු නිවාඩුවට යාල සෆාරි යන්න එන්න කියන පෝස්ට් එකක්..." class="w-full p-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+<label class="block text-sm font-semibold text-gray-700 mb-2">3. ඔබේ නිෂ්පාදනයේ පින්තූරයක් එක් කරන්න (Reference Image):</label>
+<input type="file" id="bgImage" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-gray-300 p-2 rounded-xl" />
+</div>
+
+<div>
+<label class="block text-sm font-semibold text-gray-700 mb-2">4. ඔබට අවශ්‍ය දේ ලියන්න (Prompt):</label>
+<textarea id="userPrompt" rows="3" placeholder="උදා: Modern ethnic clothing collection banner with luxury vibes..." class="w-full p-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
 </div>
 </div>
 
@@ -63,6 +68,20 @@
 <canvas id="downloadCanvas" class="hidden"></canvas>
 
 <script>
+let base64ImgStr = "";
+
+// Convert uploaded image to Base64 string
+document.getElementById('bgImage').addEventListener('change', function(e) {
+const file = e.target.files[0];
+if (file) {
+const reader = new FileReader();
+reader.onload = function(event) {
+base64ImgStr = event.target.result;
+};
+reader.readAsDataURL(file);
+}
+});
+
 function updatePreviewSize() {
 const ratio = document.getElementById('ratio').value;
 const preview = document.getElementById('previewContainer');
@@ -79,22 +98,26 @@ const ratio = document.getElementById('ratio').value;
 const prompt = document.getElementById('userPrompt').value;
 const btn = document.getElementById('genBtn');
 
-if (!prompt) return alert("ਕරුණਾකර පෝස්ට් එකේ වෙන්න ඕන දේ ලියන්න!");
+if (!prompt) return alert("කරුණාකර පෝස්ට් එකේ වෙන්න ඕන දේ ලියන්න!");
 
 btn.disabled = true;
 btn.innerText = "⏳ AI මොඩලය මඟින් ඩිසයින් එක සාදමින් පවතී...";
 
 try {
-// Netlify Backend Function එකට Request එක යවනවා
 const res = await fetch('/.netlify/functions/generate', {
 method: 'POST',
 headers: { 'Content-Type': 'application/json' },
-body: JSON.stringify({ category, ratio, prompt })
+body: JSON.stringify({ category, ratio, prompt, hasImage: base64ImgStr !== "" })
 });
 const data = await res.json();
 
 if (data.svg) {
-document.getElementById('previewContainer').innerHTML = data.svg;
+let finalSvg = data.svg;
+// Replace the AI's placeholder with the actual base64 image data
+if (base64ImgStr !== "") {
+finalSvg = finalSvg.replace(/{USER_IMAGE}/g, base64ImgStr);
+}
+document.getElementById('previewContainer').innerHTML = finalSvg;
 document.getElementById('downloadBtn').classList.remove('hidden');
 } else {
 alert(data.error || "දෝෂයක් සිදු විය.");
@@ -132,7 +155,7 @@ context.drawImage(image, 0, 0, width, height);
 const pngURL = canvas.toDataURL("image/png");
 const downloadLink = document.createElement("a");
 downloadLink.href = pngURL;
-downloadLink.download = `LankaAI_${category}_${ratio}.png`;
+downloadLink.download = `LankaAI_Pro_${category}_${ratio}.png`;
 document.body.appendChild(downloadLink);
 downloadLink.click();
 document.body.removeChild(downloadLink);
