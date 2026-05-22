@@ -16,28 +16,104 @@ if (ratio === '4:5') { width = 1080; height = 1350; }
 let bgColor = "#f8fafc";
 let accentColor = "#3b82f6";
 let overlayCard = "rgba(255, 255, 255, 0.9)";
-let customStyle = "Theme: Modern commercial advertisement. Style: Clean geometric layouts, elegant typography with beautiful backgrounds.";
+let customStyle = "Theme: Modern commercial advertisement. Style: Clean geometric layouts, elegant typography.";
 
 if (category === 'clothing') {
-bgColor = "#111827"; // Luxury Dark
-accentColor = "#fbbf24"; // Amber Gold
+bgColor = "#111827";
+accentColor = "#fbbf24";
 overlayCard = "rgba(31, 41, 55, 0.8)";
 customStyle = "Theme: Premium Fashion Brand. Style: Editorial fashion magazine template layout with upscale geometric presentation.";
 } else if (category === 'tourism') {
-bgColor = "#14532d"; // Safari Jungle Green
-accentColor = "#f97316"; // Safety Orange
+bgColor = "#14532d";
+accentColor = "#f97316";
 overlayCard = "rgba(255, 255, 255, 0.95)";
 customStyle = "Theme: Wild safari adventure. Colors: Rich olive green, warm wooden tones, safari orange.";
 } else if (category === 'cake') {
-bgColor = "#fdf2f8"; // Pastel Soft Pink
-accentColor = "#db2777"; // Deep Pink
+bgColor = "#fdf2f8";
+accentColor = "#db2777";
 overlayCard = "rgba(255, 255, 255, 0.9)";
 customStyle = "Theme: Luxury custom bakers. Colors: Pastel pink, rich sweet cream, golden accents.";
 } else if (category === 'rent') {
-bgColor = "#0f172a"; // Tech Slate
-accentColor = "#eab308"; // Glowing Yellow
+bgColor = "#0f172a";
+accentColor = "#eab308";
 overlayCard = "rgba(30, 41, 59, 0.85)";
 customStyle = "Theme: Modern automotive car rent. Colors: High-contrast professional dark mode with striking neon yellow accents.";
+}
+
+// 3. SAFE GLOBAL DEFINITION FOR IMAGE TAGS
+let finalImageTags = "";
+
+if (imageCount && imageCount > 0) {
+if (imageCount === 1) {
+let imgW = width * 0.7;
+let imgH = height * 0.55;
+let imgX = (width - imgW) / 2;
+let imgY = height * 0.18;
+
+finalImageTags = `<g filter="url(#shadow)">
+<rect x="${imgX - 10}" y="${imgY - 10}" width="${imgW + 20}" height="${imgH + 20}" rx="15" fill="#ffffff" stroke="${accentColor}" stroke-width="4"/>
+<clipPath id="clip0"><rect x="${imgX}" y="${imgY}" width="${imgW}" height="${imgH}" rx="10"/></clipPath>
+<image href="{USER_IMAGE_0}" x="${imgX}" y="${imgY}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip0)"/>
+</g>`;
+}
+else if (imageCount === 2) {
+let gap = 40;
+let imgW = (width * 0.85 - gap) / 2;
+let imgH = height * 0.55;
+let startX = (width - (imgW * 2 + gap)) / 2;
+let imgY = height * 0.18;
+
+finalImageTags = `
+<g filter="url(#shadow)">
+<rect x="${startX - 8}" y="${imgY - 8}" width="${imgW + 16}" height="${imgH + 16}" rx="15" fill="#ffffff" stroke="${accentColor}" stroke-width="3"/>
+<clipPath id="clip1"><rect x="${startX}" y="${imgY}" width="${imgW}" height="${imgH}" rx="10"/></clipPath>
+<image href="{USER_IMAGE_0}" x="${startX}" y="${imgY}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip1)"/>
+</g>
+<g filter="url(#shadow)">
+<rect x="${startX + imgW + gap - 8}" y="${imgY - 8}" width="${imgW + 16}" height="${imgH + 16}" rx="15" fill="#ffffff" stroke="${accentColor}" stroke-width="3"/>
+<clipPath id="clip2"><rect x="${startX + imgW + gap}" y="${imgY}" width="${imgW}" height="${imgH}" rx="10"/></clipPath>
+<image href="{USER_IMAGE_1}" x="${startX + imgW + gap}" y="${imgY}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#clip2)"/>
+</g>`;
+}
+else {
+let gap = 30;
+let imgW = (width * 0.85 - gap) / 2;
+let imgH = (height * 0.55 - gap) / 2;
+let startX = (width - (imgW * 2 + gap)) / 2;
+let startY = height * 0.18;
+
+let slot1 = `<g filter="url(#shadow)">
+<rect x="${startX - 6}" y="${startY - 6}" width="${imgW + 12}" height="${imgH + 12}" rx="12" fill="#ffffff" stroke="${accentColor}" stroke-width="2"/>
+<clipPath id="c1"><rect x="${startX}" y="${startY}" width="${imgW}" height="${imgH}" rx="8"/></clipPath>
+<image href="{USER_IMAGE_0}" x="${startX}" y="${startY}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#c1)"/>
+</g>`;
+
+let slot2 = `<g filter="url(#shadow)">
+<rect x="${startX + imgW + gap - 6}" y="${startY - 6}" width="${imgW + 12}" height="${imgH + 12}" rx="12" fill="#ffffff" stroke="${accentColor}" stroke-width="2"/>
+<clipPath id="c2"><rect x="${startX + imgW + gap}" y="${startY}" width="${imgW}" height="${imgH}" rx="8"/></clipPath>
+<image href="{USER_IMAGE_1}" x="${startX + imgW + gap}" y="${startY}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#c2)"/>
+</g>`;
+
+let slot3 = "";
+if (imageCount >= 3) {
+slot3 = `<g filter="url(#shadow)">
+<rect x="${startX - 6}" y="${startY + imgH + gap - 6}" width="${imgW + 12}" height="${imgH + 12}" rx="12" fill="#ffffff" stroke="${accentColor}" stroke-width="2"/>
+<clipPath id="c3"><rect x="${startX}" y="${startY + imgH + gap}" width="${imgW}" height="${imgH}" rx="8"/></clipPath>
+<image href="{USER_IMAGE_2}" x="${startX}" y="${startY + imgH + gap}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#c3)"/>
+</g>`;
+}
+
+let slot4 = "";
+if (imageCount >= 4) {
+slot4 = `<g filter="url(#shadow)">
+<rect x="${startX + imgW + gap - 6}" y="${startY + imgH + gap - 6}" width="${imgW + 12}" height="${imgH + 12}" rx="12" fill="#ffffff" stroke="${accentColor}" stroke-width="2"/>
+<clipPath id="c4"><rect x="${startX + imgW + gap}" y="${startY + imgH + gap}" width="${imgW}" height="${imgH}" rx="8"/></clipPath>
+<image href="{USER_IMAGE_3}" x="${startX + imgW + gap}" y="${startY + imgH + gap}" width="${imgW}" height="${imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#c4)"/>
+</g>`;
+}
+
+finalImageTags = slot1 + slot2 + slot3 + slot4;
+}
 }
 
 const apiKey = process.env.GEMINI_API_KEY;
@@ -78,7 +154,6 @@ body: JSON.stringify(apiPayload)
 const data = await apiResponse.json();
 let aiGeneratedGraphics = data.candidates[0].content.parts[0].text.trim();
 
-// Clean markdown if present
 if (aiGeneratedGraphics.includes("```")) {
 aiGeneratedGraphics = aiGeneratedGraphics.replace(/```svg|```xml|```html|```/gi, "").trim();
 }
@@ -86,7 +161,7 @@ if (!aiGeneratedGraphics.startsWith("<svg") && aiGeneratedGraphics.includes("<sv
 aiGeneratedGraphics = aiGeneratedGraphics.substring(aiGeneratedGraphics.indexOf("<svg"));
 }
 
-// 5. HYBRID ASSEMBLY: Inject the hardcoded safe image layout right before the closing </svg> tag
+// 5. HYBRID ASSEMBLY
 let finalClosingTagIndex = aiGeneratedGraphics.lastIndexOf("</svg>");
 if (finalClosingTagIndex !== -1) {
 let coreSvgSetup = aiGeneratedGraphics.substring(0, finalClosingTagIndex);
@@ -99,7 +174,7 @@ let filterDef = `<defs>
 
 aiGeneratedGraphics = `${coreSvgSetup}
 ${filterDef}
-${generatedImageTags}
+${finalImageTags}
 </svg>`;
 }
 
