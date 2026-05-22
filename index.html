@@ -3,21 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lanka AI Design Agent PRO v2</title>
+<title>Lanka AI Design Agent PRO v3</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 font-sans min-h-screen flex flex-col justify-between">
 
 <header class="bg-slate-900 text-white py-6 text-center shadow-sm">
 <h1 class="text-2xl font-bold text-amber-400">Lanka AI Design Agent PRO</h1>
-<p class="text-xs text-slate-400 mt-1">Multi-Image Support: මෝඩල් සහ ඇඳුම් මෝස්තර එකට එකතු කරන සුපිරි AI පද්ධතිය</p>
+<p class="text-xs text-slate-400 mt-1">Multi-Image Gallery Support: એકસાથે અનેક રેફરન્સ પિંકચર્સ અપલોડ કરવાની સુવિધા</p>
 </header>
 
 <main class="max-w-5xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-2 gap-8 w-full flex-grow">
 <div class="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col justify-between">
 <div class="space-y-6">
 <div>
-<label class="block text-sm font-semibold text-gray-700 mb-2">1. බිස්නස් වර්ගය තෝරන්න:</label>
+<label class="block text-sm font-semibold text-gray-700 mb-2">1. બિસ્னಸ್ වර්ගය තෝරන්න:</label>
 <select id="category" class="w-full p-3 border border-gray-300 rounded-xl text-sm bg-white outline-none">
 <option value="clothing">👕 Clothing Business</option>
 <option value="cake">🎂 Cake & Bakery</option>
@@ -37,20 +37,15 @@
 </div>
 
 <div>
-<label class="block text-sm font-semibold text-gray-700 mb-1">3. ප්‍රධාන පින්තූරය (Model / Product Photo):</label>
-<p class="text-[11px] text-gray-400 mb-2">ඩිසයින් එක මැදට එන්න ඕන මෝඩල්ගේ හෝ භාණ්ඩයේ ෆොටෝ එක</p>
-<input type="file" id="modelImage" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-gray-300 p-2 rounded-xl" />
+<label class="block text-sm font-semibold text-gray-700 mb-1">3. રેફરન્સ પિંકચર્સ અપલોડ કરો (Reference Images):</label>
+<p class="text-[11px] text-gray-400 mb-2">તમે એક અથવા એકથી વધુ ગમે તેટલા પિંકચર્સ એકસાથે સિલેક્ટ કરી શકો છો (Multi-select)</p>
+<input type="file" id="galleryImages" accept="image/*" multiple class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 border border-gray-300 p-2 rounded-xl" />
+<div id="thumbsPreview" class="flex flex-wrap gap-2 mt-2"></div>
 </div>
 
 <div>
-<label class="block text-sm font-semibold text-gray-700 mb-1">4. රෙදි මෝස්තරය / Background සාම්පලයක් (Optional Reference):</label>
-<p class="text-[11px] text-gray-400 mb-2">AI එකට Background එක සහ කලාව හදන්න අවශ්‍ය රෙදි කෑල්ලේ හෝ pattern එකේ ෆොටෝ එක</p>
-<input type="file" id="patternImage" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 border border-gray-300 p-2 rounded-xl" />
-</div>
-
-<div>
-<label class="block text-sm font-semibold text-gray-700 mb-2">5. ඔබට අවශ්‍ය දේ ලියන්න (Prompt):</label>
-<textarea id="userPrompt" rows="3" placeholder="උදා: New Arrival New Year Sale. Use the model photo in center..." class="w-full p-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+<label class="block text-sm font-semibold text-gray-700 mb-2">4. ඔබට අවශ්‍ය දේ ලියන්න (Prompt):</label>
+<textarea id="userPrompt" rows="3" placeholder="உதா: Create a beautiful promotional social media banner using the uploaded images creatively..." class="w-full p-3 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
 </div>
 </div>
 
@@ -75,26 +70,30 @@
 <canvas id="downloadCanvas" class="hidden"></canvas>
 
 <script>
-let base64ModelStr = "";
-let base64PatternStr = "";
+let uploadedImagesArray = [];
 
-// Convert Model Image to Base64
-document.getElementById('modelImage').addEventListener('change', function(e) {
-const file = e.target.files[0];
-if (file) {
+// Handle multi-image selection and preview thumbnails
+document.getElementById('galleryImages').addEventListener('change', function(e) {
+const files = e.target.files;
+const thumbsContainer = document.getElementById('thumbsPreview');
+thumbsContainer.innerHTML = ""; // reset
+uploadedImagesArray = [];
+
+if (files.length > 0) {
+Array.from(files).forEach((file, index) => {
 const reader = new FileReader();
-reader.onload = function(event) { base64ModelStr = event.target.result; };
+reader.onload = function(event) {
+const base64Str = event.target.result;
+uploadedImagesArray.push(base64Str);
+
+// Render small thumbnail for UI feedback
+const img = document.createElement('img');
+img.src = base64Str;
+img.className = "w-12 h-12 object-cover rounded-lg border border-gray-300 shadow-sm";
+thumbsContainer.appendChild(img);
+};
 reader.readAsDataURL(file);
-}
 });
-
-// Convert Pattern Image to Base64
-document.getElementById('patternImage').addEventListener('change', function(e) {
-const file = e.target.files[0];
-if (file) {
-const reader = new FileReader();
-reader.onload = function(event) { base64PatternStr = event.target.result; };
-reader.readAsDataURL(file);
 }
 });
 
@@ -127,21 +126,20 @@ body: JSON.stringify({
 category,
 ratio,
 prompt,
-hasModel: base64ModelStr !== "",
-hasPattern: base64PatternStr !== ""
-});
+imageCount: uploadedImagesArray.length
+})
 });
 const data = await res.json();
 
 if (data.svg) {
 let finalSvg = data.svg;
-// Replace placeholders with real images safely
-if (base64ModelStr !== "") {
-finalSvg = finalSvg.replace(/{USER_MODEL_IMAGE}/g, base64ModelStr);
-}
-if (base64PatternStr !== "") {
-finalSvg = finalSvg.replace(/{USER_PATTERN_IMAGE}/g, base64PatternStr);
-}
+
+// Dynamically loop and replace placeholders {USER_IMAGE_0}, {USER_IMAGE_1}, etc.
+uploadedImagesArray.forEach((base64Str, index) => {
+const placeholder = new RegExp(`{USER_IMAGE_${index}}`, 'g');
+finalSvg = finalSvg.replace(placeholder, base64Str);
+});
+
 document.getElementById('previewContainer').innerHTML = finalSvg;
 document.getElementById('downloadBtn').classList.remove('hidden');
 } else {
